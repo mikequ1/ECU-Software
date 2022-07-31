@@ -1,9 +1,9 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "sensors/SensorMAP.h"
+#include "Constants.h"
 #include "sensors/AnlgSensor.h"
-#include "sensors/SensorTPS.h"
+#include "sensors/SensorAvg.h"
 #include "utils/spi_adc.h"
 
 class Controller {
@@ -117,9 +117,10 @@ private:
 
   AnlgSensor* s_ect;
   AnlgSensor* s_iat;
-  SensorMAP* s_map; //MAP module, responsible for collecting data and processing data from the Manifold Pressure Sensor
-  SensorTPS* s_tps; //TPS Module, responsible for collecting TPS
+  AnlgSensor* s_map; //MAP module, responsible for collecting data and processing data from the Manifold Pressure Sensor
+  AnlgSensor* s_tps; //TPS Module, responsible for collecting TPS
   
+  SensorAvg* s_map_avg;
 
   double AFR;
 

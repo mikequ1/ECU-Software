@@ -2,8 +2,13 @@
 
 #include "Arduino.h"
 #include "utils/TimerThree.h"
+
 #include "sensors/ECTSensor.h"
 #include "sensors/IATSensor.h"
+#include "sensors/TPSSensor.h"
+#include "sensors/MAPSensor.h"
+#include "sensors/SensorAvg.h"
+
 #include "SD.h"
 #include "math.h"
 
@@ -42,10 +47,12 @@ bool Controller::readSensors() {
     const int* channels = adc->getChannels();
     sensorVals = channels;
 
-    s_tps->getTPSSensor(sensorVals);
+    s_tps->readSensor(sensorVals);
     s_ect->readSensor(sensorVals);
     s_iat->readSensor(sensorVals);
-    s_map->calcMAPAvg(sensorVals);
+    s_map->readSensor(sensorVals);
+
+    s_map_avg->calcAvg();
 
     refreshAvailable = true;
   }
@@ -70,10 +77,12 @@ void Controller::initializeParameters() {
     AFR = 0;
 
     // Initialize MAP averaging
-    s_map = new SensorMAP();
+    s_map = new MAPSensor();
     s_ect = new ECTSensor();
     s_iat = new IATSensor();
-    s_tps = new SensorTPS();
+    s_tps = new TPSSensor();
+
+    s_map_avg = new SensorAvg(s_map);
 
     // Initialize MAP and RPM indicies to zero.
     mapIndex = 0;
@@ -140,7 +149,7 @@ void Controller::countRevolution() {
       pulseOn();
   } 
   else {  // inject when the time since the last trough is < 1 period (2 rotations between troughs)
-    if (!detectEngineOff() && (s_map->getMapGauss() > s_map->getMap()))//&& ((60 * 1E6) / RPM > micros() - MAPTrough))
+    if (!detectEngineOff() && (s_map_avg->getSensorGauss() > s_map->getReading()))//&& ((60 * 1E6) / RPM > micros() - MAPTrough))
       pulseOn();
   }
 }
@@ -230,7 +239,7 @@ void Controller::lookupPulseTime() {
     // Map the MAP and RPM readings to the dimensionns of the AFR lookup table
     noInterrupts();
 
-    scaledMAP = doubleMap(s_map->getMapAvg(), minMAP, maxMAP, 0, numTableRows - 1); //number from 0 - numTableRows-1
+    scaledMAP = doubleMap(s_map_avg->getSensorAvg(), minMAP, maxMAP, 0, numTableRows - 1); //number from 0 - numTableRows-1
     scaledRPM = doubleMap(RPM, minRPM, maxRPM, 0, numTableCols - 1); //number from 0 - numTableCols-1
 
     // Clip out of bounds to the min or max value, whichever is closer.

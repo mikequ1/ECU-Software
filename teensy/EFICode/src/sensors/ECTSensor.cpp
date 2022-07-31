@@ -7,12 +7,12 @@
 const double TEMP_BETA_ECT = 3988; // tolerance: {+/-1%,+/-1.5%}
 const double T_0 = 298.15; // temp in Kelvin at which R_0 values are taken
 const double lnR_0_ECT = 8.4849;
-const double tempConstECT = TEMP_BETA_ECT/T_0 - lnR_0_ECT;
+const double TEMP_CONST_ECT = TEMP_BETA_ECT/T_0 - lnR_0_ECT;
 const double R_DIV_ECT = 10000; // resistance of other resistor in voltage divider
 
 void ECTSensor::readSensor(int* sensorVals){
     double tempR = R_DIV_ECT / (maxADC/sensorVals[ECT_CHAN] - 1);
-    m_reading = TEMP_BETA_ECT / (log(tempR) + tempConstECT);
+    m_reading = TEMP_BETA_ECT / (log(tempR) + TEMP_CONST_ECT);
 }
 
 double ECTSensor::getReading() {
