@@ -15,7 +15,7 @@ void TPSSensor::readSensor(int* sensorVals) {
   unsigned long currThrottleMeasurementTime = micros();
 
   double newTPSVal = sensorVals[TPS_CHAN];
-  double newTPS = doubleMap(newTPSVal, TPS_0_DEG, TPS_90_DEG, 0, 1); //need to re-adjust TPS_0Deg and TPS_90Deg
+  double newTPS = Utils::doubleMap(newTPSVal, TPS_0_DEG, TPS_90_DEG, 0, 1); //need to re-adjust TPS_0Deg and TPS_90Deg
   
   if(newTPS < 0)
     newTPS = 0;

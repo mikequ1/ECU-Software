@@ -2,6 +2,7 @@
 
 #include "Arduino.h"
 #include "utils/TimerThree.h"
+#include "Utils.h"
 
 #include "sensors/ECTSensor.h"
 #include "sensors/IATSensor.h"
@@ -154,10 +155,6 @@ void Controller::countRevolution() {
   }
 }
 
-double Controller::doubleMap(double val, double minIn, double maxIn, double minOut, double maxOut) {
-    return ((val - minIn) / (maxIn - minIn)) * (maxOut - minOut) + minOut;
-}
-
 void Controller::enableINJ() {
   INJisDisabled = false;
 }
@@ -239,8 +236,8 @@ void Controller::lookupPulseTime() {
     // Map the MAP and RPM readings to the dimensionns of the AFR lookup table
     noInterrupts();
 
-    scaledMAP = doubleMap(s_map_avg->getSensorAvg(), minMAP, maxMAP, 0, numTableRows - 1); //number from 0 - numTableRows-1
-    scaledRPM = doubleMap(RPM, minRPM, maxRPM, 0, numTableCols - 1); //number from 0 - numTableCols-1
+    scaledMAP = Utils::doubleMap(s_map_avg->getSensorAvg(), minMAP, maxMAP, 0, numTableRows - 1); //number from 0 - numTableRows-1
+    scaledRPM = Utils::doubleMap(RPM, minRPM, maxRPM, 0, numTableCols - 1); //number from 0 - numTableCols-1
 
     // Clip out of bounds to the min or max value, whichever is closer.
     scaledMAP = constrain(scaledMAP, 0, numTableRows - 1);

@@ -1,7 +1,7 @@
 #include "Speedometer.h"
 
 #include "Arduino.h"
-#include "Constants.h"
+#include "../Constants.h"
 
 Speedometer::Speedometer(){
     totalRotations = 0;

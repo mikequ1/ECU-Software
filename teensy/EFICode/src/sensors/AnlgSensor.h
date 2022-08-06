@@ -1,7 +1,7 @@
 #ifndef ANLGSENSOR_H
 #define ANLGSENSOR_H
 
-//singleton abstract class that represents all analog reading sensors
+//abstract class that represents all analog reading sensors
 class AnlgSensor {
 
 public:
