@@ -58,6 +58,7 @@ public:
 
   // Getter for value at channel n
   const int * getChannels();
+  
   inline int getConvTime() {
     return convTime;
   }

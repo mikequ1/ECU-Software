@@ -55,3 +55,7 @@ void SensorAvg::calcAvg(){
 	    m_updateTime = micros();
     }
 }
+
+double SensorAvg::getSensorReading(){
+    return m_sensor->getReading();
+}

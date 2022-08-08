@@ -1,7 +1,6 @@
 #ifndef SPEEDOMETER_H
 #define SPEEDOMETER_H
 
-double DISTANCE_PER_ROTATION = 0; // How far will the car roll in one rear wheel revolution
 // in INCHES
 
 // 2 ways to calculate speed
@@ -15,13 +14,14 @@ double DISTANCE_PER_ROTATION = 0; // How far will the car roll in one rear wheel
 // interface for implementation 2 (without filter)
 class Speedometer {
     public:
-        Speedometer();
+        Speedometer* create();
         void updateSpd(); // increments totalRotations, rotations, upon interrupt of wheel-mounted hall sensor
         double getSpd();
     private:
-        double spd;
-        int totalRotations; // analogous to totalRevolutions for RPM
-        long lastRotationTimestamp; 
+        Speedometer();
+        double m_spd;
+        unsigned long m_totalRotations; // analogous to totalRevolutions for RPM
+        unsigned long m_lastRotationTimestamp; 
 };
 
 #endif

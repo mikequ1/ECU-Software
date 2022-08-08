@@ -129,6 +129,7 @@ void Controller::countRevolution() {
   if (micros() - previousRev > 0 && (micros() - previousRev < minDelayPerRev))
     return;
   previousRev = micros();
+
   if (INJisDisabled) {
     enableINJ();
   }
@@ -175,6 +176,7 @@ void Controller::pulseOn() {
   Timer3.setPeriod(injectorPulseTime);
   digitalWrite(INJ_Pin, HIGH);
   Timer3.start();
+
   noInterrupts(); //To ensure when lastPulse is used in pulseOff(), it isn't read as lastPulse is getting modified
   lastPulse = micros(); //Race Conditions Problem
   interrupts();

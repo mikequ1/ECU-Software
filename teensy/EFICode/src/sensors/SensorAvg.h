@@ -15,6 +15,7 @@ public:
     double getPrev();
     double getPrevD();
 
+    double getSensorReading();
     void calcAvg();
 
 private:

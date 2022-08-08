@@ -1,21 +1,22 @@
-#ifndef REVCOUNT_H
-#define REVCOUNT_H
+#ifndef REVCOUNTER_H
+#define REVCOUNTER_H
 
 #include "../sensors/AnlgSensor.h"
 #include "../sensors/SensorAvg.h"
 
-class RevCount {
+class RevCounter {
 public:
-    RevCount* create(AnlgSensor* mapSensor, SensorAvg* mapAverager);
+    RevCounter* create(SensorAvg* mapAverager);
     void countRevolution();
 
     void updateRPM();
-    long getRPM (unsigned long timePassed, unsigned long revs);
+    long getRPM (unsigned long timePassed, int revs);
 
     unsigned long getTotalRevolutions();
 
 private:
-    AnlgSensor* m_mapSensor;
+    RevCounter(SensorAvg* mapAverager);
+
     SensorAvg* m_mapAverager;
 
     unsigned long m_calcRevolutions;
