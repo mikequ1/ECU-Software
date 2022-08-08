@@ -12,7 +12,11 @@ public:
     void updateRPM();
     long getRPM (unsigned long timePassed, int revs);
 
+    void handleEngineOff();
+
     unsigned long getTotalRevolutions();
+    unsigned long getStartingRevolutions();
+    unsigned long getPrevRevTime();
 
 private:
     RevCounter(SensorAvg* mapAverager);

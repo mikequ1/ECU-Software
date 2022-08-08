@@ -43,6 +43,8 @@ void lowerStartupMod();
 #define OIN1_CHAN 5 // UPDATE
 #define OIN2_CHAN 6 // UPDATE
 
+enum EngineState {OFF, STARTING, MAX_TEMP_EXCEEDED, OK}
+
 const double Vs_5   = 5.00; //Volts
 const double Vref_5 = 4.98; // NEED TO PROPERLY MEASURE WITH FLUKE **************************
 const double Vs_3v3 = 3.30; //Volts
@@ -65,7 +67,7 @@ const double injectionConstant  =
 const int openTime = 1000;          // Estimated amount of time for injector to open in microseconds.
 
 // Controls the total number of revolutions
-const int numRevsForStart = 25;
+const int NUM_REVS_FOR_START = 25;
 
 // Number of magnets the hall effect sensor must detect for one full revolution
 const int numMagnets = 1;

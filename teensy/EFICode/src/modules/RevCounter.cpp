@@ -46,10 +46,21 @@ void RevCounter::updateRPM(){
     }
 }
 
+void RevCounter::handleEngineOff(){
+    m_totalrevolutions = 0;
+    m_startingRevolutions = 0;
+    m_rpm = 0;
+    m_prevRpmCalcTime = micros();
+}
+
 long RevCounter::getRPM (unsigned long timePassed, int revs){
     return (60 * 1E6 * revs) / (timePassed);
 }
 
 unsigned long RevCounter::getTotalRevolutions(){
     return m_totalRevolutions;
+}
+
+unsigned long RevCounter::getStartingRevolutions(){
+    return m_startingRevolutions;
 }
