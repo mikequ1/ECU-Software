@@ -66,7 +66,7 @@ void loop() {
 }
 
 void countRev() {
-  c->countRevolution();
+  c->onRevDetection();
 }
 
 void handle_pulseTimerTimeout() {

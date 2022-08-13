@@ -38,22 +38,22 @@ Controller::Controller() {
 
 bool Controller::readSensors() {
   if (refreshAvailable){
-    adc->refresh();
+    m_adc->refresh();
     refreshAvailable = false;
   }
 
-  adc->checkEOC();
+  m_adc->checkEOC();
 
-  if (adc->get_validVals() == 1){
-    const int* channels = adc->getChannels();
+  if (m_adc->get_validVals() == 1){
+    const int* channels = m_adc->getChannels();
     sensorVals = channels;
 
-    s_tps->readSensor(sensorVals);
-    s_ect->readSensor(sensorVals);
-    s_iat->readSensor(sensorVals);
-    s_map->readSensor(sensorVals);
+    m_tps->readSensor(sensorVals);
+    m_ect->readSensor(sensorVals);
+    m_iat->readSensor(sensorVals);
+    m_map->readSensor(sensorVals);
 
-    s_map_avg->calcAvg();
+    m_map_avg->calcAvg();
 
     refreshAvailable = true;
   }
@@ -62,28 +62,22 @@ bool Controller::readSensors() {
 
 
 void Controller::initializeParameters() {
-    // Start at zero revolutions.
-    revolutions = 0;
-    totalRevolutions = 0;
-    startingRevolutions = 0;
+  m_adc = new SPI_ADC();
+  refreshAvailable = true;
 
-    // Number of revolutions that must pass before recalculating RPM.
-    previousRev = micros();
+  m_map = new MAPSensor();
+  m_ect = new ECTSensor();
+  m_iat = new IATSensor();
+  m_tps = new TPSSensor();
+  m_map_avg = new SensorAvg(m_map);
 
-    // Initialize ADC
-    adc = new SPI_ADC();
-    refreshAvailable = true;
+  m_revCounter = RevCounter::create();
+  m_speedometer = Speedometer::create();
+  m_esa = EngineStateArbitrator::create(m_ect, m_revCounter);
+  m_efih = EFIHardware::create();
 
     // Initialize AFR values.
     AFR = 0;
-
-    // Initialize MAP averaging
-    s_map = new MAPSensor();
-    s_ect = new ECTSensor();
-    s_iat = new IATSensor();
-    s_tps = new TPSSensor();
-
-    s_map_avg = new SensorAvg(s_map);
 
     // Initialize MAP and RPM indicies to zero.
     mapIndex = 0;
@@ -92,13 +86,7 @@ void Controller::initializeParameters() {
     // Initialize injector to disabled mode.
     // Used to detach the timer interrupt for pulsing off
     // when the engine is not running.
-    INJisDisabled = true;
     constModifier = 1.0;
-
-    // Used to determine the amount of fuel used. (W22)
-    lastPulse = 0;
-    totalPulseTime = 0;
-    totalFuelUsed = 0;
 
     // True   -> data reporting on.
     // False  -> data reporting off.
@@ -123,26 +111,15 @@ void Controller::initializeParameters() {
     lastRPMCalcTime = micros();
 }
 
-void Controller::countRevolution() {
-  //  When called too soon, we skip countRevolution
-  //  When micros() overflows, we continue as if its a normal countRevolution
-  if (micros() - previousRev > 0 && (micros() - previousRev < minDelayPerRev))
+void Controller::onRevDetection() {
+  if (m_esa->getEngineState() == EngineState::MAX_TEMP_EXCEEDED)
     return;
-  previousRev = micros();
 
-  if (INJisDisabled) {
+  if (!m_revCounter->countRevolution())
+    return;
+
+  if (m_efih->isInjDisabled()) {
     enableINJ();
-  }
-
-  // Increment the number of revolutions
-  revolutions++;
-  totalRevolutions++;
-  startingRevolutions++;
-
-  // MAX TEMP CHECK
-  if (s_ect->getReading() > MAX_ALLOWABLE_ECT){
-    digitalWrite(LED_1, HIGH);
-    return;
   }
 
   //Inject on every second revolution because this is a 4 stroke engine
@@ -151,70 +128,11 @@ void Controller::countRevolution() {
       pulseOn();
   } 
   else {  // inject when the time since the last trough is < 1 period (2 rotations between troughs)
-    if (!detectEngineOff() && (s_map_avg->getSensorGauss() > s_map->getReading()))//&& ((60 * 1E6) / RPM > micros() - MAPTrough))
+    if (!detectEngineOff() && (m_map_avg->getSensorGauss() > m_map->getReading()))//&& ((60 * 1E6) / RPM > micros() - MAPTrough))
       pulseOn();
   }
 }
 
-void Controller::enableINJ() {
-  INJisDisabled = false;
-}
-
-void Controller::disableINJ() {
-  Timer3.stop();
-  digitalWrite(INJ_Pin, LOW);
-  noInterrupts();
-  INJisDisabled = true;
-  interrupts();
-}
-
-void Controller::pulseOn() {
-  // disable data sending
-  currentlySendingData = false;
-  if (injectorPulseTime > 2.5E5)
-    injectorPulseTime = 2.5E5;
-  Timer3.setPeriod(injectorPulseTime);
-  digitalWrite(INJ_Pin, HIGH);
-  Timer3.start();
-
-  noInterrupts(); //To ensure when lastPulse is used in pulseOff(), it isn't read as lastPulse is getting modified
-  lastPulse = micros(); //Race Conditions Problem
-  interrupts();
-}
-
-void Controller::pulseOff() {
-  // When it's time to turn the injector off, follow these steps and turn it off
-  digitalWrite(INJ_Pin, LOW);
-  Timer3.stop();
-
-  // Save the amount of time the injector pin spent HIGH.
-  totalPulseTime += (micros() - lastPulse);
-
-  // Let data be sent again
-  currentlySendingData = enableSendingData;
-  haveInjected = true;
-}
-
-
-void Controller::updateRPM() {
-  noInterrupts();
-  int tempRev = revolutions; //Prevents revolutions being read while it is being modified by the
-  //countRevolution() function associated with the interrupt
-  interrupts();
-  if (tempRev >= revsPerCalc) {
-    noInterrupts(); //To ensure that the interrupt of countRev doesn't get lost in case of bad timing of threads
-    unsigned long currentRPMCalcTime = micros();
-    if(currentRPMCalcTime - lastRPMCalcTime > 0) // only write if this value is positive (protect from overflow)
-    	RPM = getRPM(currentRPMCalcTime - lastRPMCalcTime, tempRev); //Uses the previously determined value of revolutions to reduce
-    //amount of noInterrupts() calls
-    lastRPMCalcTime = currentRPMCalcTime;
-    revolutions = 0; //Race Conditions Modification Problem
-    interrupts();
-
-    // Should also dynamically change revsPerCalc. At lower RPM
-    // the revsPerCalc should be lower but at higher RPM it should be higher.
-  }
-}
 
 long Controller::getFuelUsed() {
   //volumetric flow rate = mass flow rate / density
@@ -238,7 +156,7 @@ void Controller::lookupPulseTime() {
     // Map the MAP and RPM readings to the dimensionns of the AFR lookup table
     noInterrupts();
 
-    scaledMAP = Utils::doubleMap(s_map_avg->getSensorAvg(), minMAP, maxMAP, 0, numTableRows - 1); //number from 0 - numTableRows-1
+    scaledMAP = Utils::doubleMap(m_map_avg->getSensorAvg(), minMAP, maxMAP, 0, numTableRows - 1); //number from 0 - numTableRows-1
     scaledRPM = Utils::doubleMap(RPM, minRPM, maxRPM, 0, numTableCols - 1); //number from 0 - numTableCols-1
 
     // Clip out of bounds to the min or max value, whichever is closer.
@@ -256,11 +174,11 @@ void Controller::lookupPulseTime() {
     long tempPulseTime;
     if (rpmIndex < numTableCols - 1 && mapIndex < numTableRows - 1) {
         // Interpolation case
-        tempPulseTime = interpolate2D(mapIndex, rpmIndex, scaledMAP-mapIndex, scaledRPM-rpmIndex) / s_iat->getReading();
+        tempPulseTime = interpolate2D(mapIndex, rpmIndex, scaledMAP-mapIndex, scaledRPM-rpmIndex) / m_iat->getReading();
     }
     else {
         // Clipped case
-        tempPulseTime = injectorBasePulseTimes[mapIndex][rpmIndex] / s_iat->getReading();
+        tempPulseTime = injectorBasePulseTimes[mapIndex][rpmIndex] / m_iat->getReading();
     }
 
     // Add extra fuel for starting
@@ -295,21 +213,22 @@ void Controller::calculateBasePulseTime(bool singleVal, int row, int col) {
   }
 }
 
-
-void Controller::updateEngineState() {
-  if (detectEngineOff()) {
-    revolutions = 0;
-    startingRevolutions = 0;
-    RPM = 0;
-    lastRPMCalcTime = micros();
-    if (!INJisDisabled) {
-      disableINJ();
-    }
-  }
+void Controller::updateRPM() {
+  m_revCounter->updateRPM();
 }
 
-bool Controller::inStartingRevs() {
-   return startingRevolutions <= numRevsForStart;
+void Controller::updateEngineState() {
+  m_esa->updateEngineState();
+}
+
+void Controller::enableINJ() {
+  m_efih->enableINJ();
+}
+void Controller::pulseOn() {
+  m_efih->pulseOn();
+}
+void Controller::pulseOff() {
+  m_efih->pulseOff();
 }
 
 
@@ -325,4 +244,8 @@ bool Controller::detectEngineOff() {
 
 long Controller::getRPM (long int timePassed, int rev) {
   return (60 * 1E6 * rev) / (timePassed);
+}
+
+bool Controller::inStartingRevs(){
+  return m_revCounter->getStartingRevolutions() <= NUM_REVS_FOR_START;
 }

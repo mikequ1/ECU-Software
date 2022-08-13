@@ -10,7 +10,7 @@ const double lnR_0_IAT = 9.21034; //8.45531}; // {ln(10000 (10000 +/-1%)),ln(470
 const double TEMP_CONST_IAT = TEMP_BETA_IAT/T_0 - lnR_0_IAT;
 const double R_DIV_IAT = 10000; // resistance of other resistor in voltage divider
 
-void IATSensor::readSensor(int* sensorVals){
+void IATSensor::readSensor(const int* sensorVals){
     double tempR = R_DIV_IAT / (maxADC/sensorVals[ECT_CHAN] - 1);
     m_reading = TEMP_BETA_IAT / (log(tempR) + TEMP_CONST_IAT);
 }

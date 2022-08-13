@@ -10,7 +10,7 @@ const double lnR_0_ECT = 8.4849;
 const double TEMP_CONST_ECT = TEMP_BETA_ECT/T_0 - lnR_0_ECT;
 const double R_DIV_ECT = 10000; // resistance of other resistor in voltage divider
 
-void ECTSensor::readSensor(int* sensorVals){
+void ECTSensor::readSensor(const int* sensorVals){
     double tempR = R_DIV_ECT / (maxADC/sensorVals[ECT_CHAN] - 1);
     m_reading = TEMP_BETA_ECT / (log(tempR) + TEMP_CONST_ECT);
 }

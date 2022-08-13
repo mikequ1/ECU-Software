@@ -5,7 +5,7 @@
 
 class IATSensor : public AnlgSensor {
 public:
-    void readSensor(int* sensorVals);
+    void readSensor(const int* sensorVals);
     double getReading();
 private:
     double m_reading;

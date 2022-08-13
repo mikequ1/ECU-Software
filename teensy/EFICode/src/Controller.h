@@ -4,6 +4,12 @@
 #include "Constants.h"
 #include "sensors/AnlgSensor.h"
 #include "sensors/SensorAvg.h"
+
+#include "modules/RevCounter.h"
+#include "modules/Speedometer.h"
+#include "modules/EFIHardware.h"
+#include "modules/EngineStateArbitrator.h"
+
 #include "utils/spi_adc.h"
 
 class Controller {
@@ -23,7 +29,7 @@ public:
   // Increments the counted number of revolutions since the last RPM update.
   // Every 2nd revolution, switches the INJ_Pin to HIGH and sets a timer for
   // the amount of time equal to the most recent calculated pulse time.
-  void countRevolution();
+  void onRevDetection();
 
   // Updates the RPM reading by dividing the total number of revolutions since
   // the last update by the number of minutes that have passed.
@@ -76,7 +82,7 @@ public:
 private:
   // Has a value of true if the timer3 interrupt is detached from the "pulseOff" function.
   // Also prevents the injector from pulsing on if true.
-  SPI_ADC* adc;
+  SPI_ADC* m_adc;
 
   bool refreshAvailable;
   const int* sensorVals;
@@ -113,12 +119,17 @@ private:
 
   long RPM;
 
-  AnlgSensor* s_ect;
-  AnlgSensor* s_iat;
-  AnlgSensor* s_map; //MAP module, responsible for collecting data and processing data from the Manifold Pressure Sensor
-  AnlgSensor* s_tps; //TPS Module, responsible for collecting TPS
+  AnlgSensor* m_ect;
+  AnlgSensor* m_iat;
+  AnlgSensor* m_map; //MAP module, responsible for collecting data and processing data from the Manifold Pressure Sensor
+  AnlgSensor* m_tps; //TPS Module, responsible for collecting TPS
   
-  SensorAvg* s_map_avg;
+  SensorAvg* m_map_avg;
+
+  RevCounter* m_revCounter;
+  Speedometer* m_speedometer;
+  EngineStateArbitrator* m_esa;
+  EFIHardware* m_efih;
 
   double AFR;
 

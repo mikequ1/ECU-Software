@@ -4,15 +4,12 @@
 const unsigned long MIN_DELAY_PER_REV = (1 / (8000 * (1/60))) * (1E6); // in units of microseconds
 const int REVS_PER_CALC = 5;
 
-RevCounter* RevCounter::create(SensorAvg* mapAverager){
-    if (!mapAverager)
-        return nullptr;
-    return new RevCounter(mapAverager);
+RevCounter* RevCounter::create(){
+    return new RevCounter();
 }
 
-RevCounter::RevCounter(SensorAvg* mapAverager) : 
-    m_mapAverager(mapAverager),
-    m_prevRevTime(0),
+RevCounter::RevCounter() : 
+    m_prevRevTime(micros()),
     m_prevRpmCalcTime(0),
     m_calcRevolutions(0),
     m_totalRevolutions(0),
@@ -20,14 +17,15 @@ RevCounter::RevCounter(SensorAvg* mapAverager) :
     m_rpm(0) {
 }
 
-void RevCounter::countRevolution(){
+bool RevCounter::countRevolution(){
     if ((micros() - m_prevRevTime > 0) && (micros() - m_prevRevTime < MIN_DELAY_PER_REV))
-        return;
-    previousRev = micros();
+        return false;
+    m_prevRevTime = micros();
 
     m_calcRevolutions++;
     m_totalRevolutions++;
     m_startingRevolutions++;
+    return true;
 }
 
 void RevCounter::updateRPM(){
@@ -47,7 +45,7 @@ void RevCounter::updateRPM(){
 }
 
 void RevCounter::handleEngineOff(){
-    m_totalrevolutions = 0;
+    m_totalRevolutions = 0;
     m_startingRevolutions = 0;
     m_rpm = 0;
     m_prevRpmCalcTime = micros();
@@ -63,4 +61,8 @@ unsigned long RevCounter::getTotalRevolutions(){
 
 unsigned long RevCounter::getStartingRevolutions(){
     return m_startingRevolutions;
+}
+
+unsigned long RevCounter::getPrevRevTime(){
+    return m_prevRevTime;
 }

@@ -43,7 +43,7 @@ void lowerStartupMod();
 #define OIN1_CHAN 5 // UPDATE
 #define OIN2_CHAN 6 // UPDATE
 
-enum EngineState {OFF, STARTING, MAX_TEMP_EXCEEDED, OK}
+enum EngineState {OFF, STARTING, MAX_TEMP_EXCEEDED, OK};
 
 const double Vs_5   = 5.00; //Volts
 const double Vref_5 = 4.98; // NEED TO PROPERLY MEASURE WITH FLUKE **************************

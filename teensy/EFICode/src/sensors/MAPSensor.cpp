@@ -8,7 +8,7 @@ const double MAPSlope = 1E3/(MAPVs*0.009);  //Pa / Volt
 const double MAPOffset = 1E3*MAPDelta/(MAPVs*0.009) + 1E3*0.095/0.009;   //Pa
 const double MAPConversion = MAPSlope * voltConv;    // Pascals / 1023
 
-void MAPSensor::readSensor(int* sensorVals){
+void MAPSensor::readSensor(const int* sensorVals){
     m_reading = MAPConversion * sensorVals[MAP_CHAN] + MAPOffset;
 }
 

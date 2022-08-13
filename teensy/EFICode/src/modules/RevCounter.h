@@ -6,8 +6,8 @@
 
 class RevCounter {
 public:
-    RevCounter* create(SensorAvg* mapAverager);
-    void countRevolution();
+    static RevCounter* create();
+    bool countRevolution();
 
     void updateRPM();
     long getRPM (unsigned long timePassed, int revs);
@@ -19,9 +19,7 @@ public:
     unsigned long getPrevRevTime();
 
 private:
-    RevCounter(SensorAvg* mapAverager);
-
-    SensorAvg* m_mapAverager;
+    RevCounter();
 
     unsigned long m_calcRevolutions;
     unsigned long m_totalRevolutions;

@@ -15,22 +15,22 @@ void Controller::sendCurrentData() { // THIS MUST TAKE LESS THAN 1 ms (to guarun
   sprintf(ecuData, "%010u:%06i:%03.3f:%03.3f:%06.3f:%06.3f:%03.3f:%05i\n",//56 bytes
     micros(),
     totalRevolutions, 
-    s_ect->getReading(), 
-    s_iat->getReading(), 
-    s_map->getReading(), 
-    s_map_avg->getSensorAvg(),
-    s_tps->getReading(), 
+    m_ect->getReading(), 
+    m_iat->getReading(), 
+    m_map->getReading(), 
+    m_map_avg->getSensorAvg(),
+    m_tps->getReading(), 
     RPM
   );
   
   sprintf(toSend, "%010u:%06i:%03.3f:%03.3f:%03.3f:%03.3f:%03.3f:%03.3f:%05i:%05i:%05i:%02.2f:%02.2f:%01.3f:%01i:%01i:%010u:%03.3f:%03.3f:%01i:%s:%01i:%03.3f\n", // about 97 bytes? (800-900 us)
   	micros(), 
 	totalRevolutions, 
-	s_ect->getReading(), 
-	s_iat->getReading(), 
-	s_map->getReading(), 
-	s_map_avg->getSensorAvg(),
-	s_tps->getReading(), 
+	m_ect->getReading(), 
+	m_iat->getReading(), 
+	m_map->getReading(), 
+	m_map_avg->getSensorAvg(),
+	m_tps->getReading(), 
 	AFR, 
 	RPM, 
   injectorPulseTime,
@@ -38,14 +38,14 @@ void Controller::sendCurrentData() { // THIS MUST TAKE LESS THAN 1 ms (to guarun
 	scaledMAP, 
 	scaledRPM,
 	AFR,
-	startingRevolutions <= numRevsForStart,
+	true,
 	haveInjected,
-	s_map_avg->getTroughTime(),
-  s_map_avg->getPrevD(),
-  s_map_avg->getSensorGauss(),
+	m_map_avg->getTroughTime(),
+  m_map_avg->getPrevD(),
+  m_map_avg->getSensorGauss(),
   SDConnected,
   fileName,
-  s_ect->getReading() > MAX_ALLOWABLE_ECT,
+  m_ect->getReading() > MAX_ALLOWABLE_ECT,
   AFR);
 
   if(SDConnected) { // open and write to file

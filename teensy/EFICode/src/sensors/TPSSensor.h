@@ -6,7 +6,7 @@
 class TPSSensor : public AnlgSensor {
 public:
     TPSSensor();
-    void readSensor(int* sensorVals);
+    void readSensor(const int* sensorVals);
     double getReading();
 private:
     double m_reading;

@@ -14,7 +14,7 @@
 // interface for implementation 2 (without filter)
 class Speedometer {
     public:
-        Speedometer* create();
+        static Speedometer* create();
         void updateSpd(); // increments totalRotations, rotations, upon interrupt of wheel-mounted hall sensor
         double getSpd();
     private:

@@ -7,7 +7,7 @@
 
 class EngineStateArbitrator {
 public:
-    EngineStateArbitrator* create(AnlgSensor* ectSensor, RevCounter* revCounter);
+    static EngineStateArbitrator* create(AnlgSensor* ectSensor, RevCounter* revCounter);
     void updateEngineState();
     EngineState getEngineState();
     

@@ -7,7 +7,7 @@ class AnlgSensor {
 public:
     AnlgSensor() {}
     virtual ~AnlgSensor() {}
-    virtual void readSensor(int* sensorVals) = 0;
+    virtual void readSensor(const int* sensorVals) = 0;
     virtual double getReading() = 0;
 
 private:
