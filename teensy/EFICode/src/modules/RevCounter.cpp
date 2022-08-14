@@ -10,7 +10,7 @@ RevCounter* RevCounter::create(){
 
 RevCounter::RevCounter() : 
     m_prevRevTime(micros()),
-    m_prevRpmCalcTime(0),
+    m_prevRpmCalcTime(micros()),
     m_calcRevolutions(0),
     m_totalRevolutions(0),
     m_startingRevolutions(0),
@@ -37,7 +37,7 @@ void RevCounter::updateRPM(){
         noInterrupts(); //To ensure that the interrupt of countRev doesn't get lost in case of bad timing of threads
         unsigned long curRPMCalcTime = micros();
         if(curRPMCalcTime - m_prevRpmCalcTime > 0) // only write if this value is positive (protect from overflow)
-    	    m_rpm = getRPM(curRPMCalcTime - m_prevRpmCalcTime, tempRev);
+    	    m_rpm = calcRPM(curRPMCalcTime - m_prevRpmCalcTime, tempRev);
         m_prevRpmCalcTime = curRPMCalcTime;
         m_calcRevolutions = 0; //Race Conditions Modification Problem
         interrupts();
@@ -51,8 +51,12 @@ void RevCounter::handleEngineOff(){
     m_prevRpmCalcTime = micros();
 }
 
-long RevCounter::getRPM (unsigned long timePassed, int revs){
+long RevCounter::calcRPM (unsigned long timePassed, int revs){
     return (60 * 1E6 * revs) / (timePassed);
+}
+
+long RevCounter::getRPM() {
+    return m_rpm;
 }
 
 unsigned long RevCounter::getTotalRevolutions(){

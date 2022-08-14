@@ -9,6 +9,7 @@
 #include "modules/Speedometer.h"
 #include "modules/EFIHardware.h"
 #include "modules/EngineStateArbitrator.h"
+#include "modules/EFI.h"
 
 #include "utils/spi_adc.h"
 
@@ -130,6 +131,7 @@ private:
   Speedometer* m_speedometer;
   EngineStateArbitrator* m_esa;
   EFIHardware* m_efih;
+  EFI* m_efi;
 
   double AFR;
 

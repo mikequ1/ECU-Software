@@ -51,6 +51,7 @@ void setup() {
   pinMode(LED_1, OUTPUT);  
 }
 
+
 void loop() {
   //Update RPM if needed.
   c->updateRPM();
@@ -60,9 +61,6 @@ void loop() {
 
   // Look up injection time on each loop cycle
   c->lookupPulseTime();
- 
-  // Checks the status of the engine. e.g., detects whether the engine is on or off.
-  c->updateEngineState();
 }
 
 void countRev() {

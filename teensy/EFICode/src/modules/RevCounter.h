@@ -10,13 +10,14 @@ public:
     bool countRevolution();
 
     void updateRPM();
-    long getRPM (unsigned long timePassed, int revs);
+    long calcRPM (unsigned long timePassed, int revs);
 
     void handleEngineOff();
 
     unsigned long getTotalRevolutions();
     unsigned long getStartingRevolutions();
     unsigned long getPrevRevTime();
+    long getRPM();
 
 private:
     RevCounter();

@@ -52,6 +52,9 @@ bool EFIHardware::isInjDisabled() const {
     return m_injIsDisabled;
 }
 
+void EFIHardware::setInjectorPulseTime(unsigned long injectorPulseTime) {
+    m_injectorPulseTime = injectorPulseTime;
+}
 
 //TODO
 double EFIHardware::getTotalFuelUsed() const {

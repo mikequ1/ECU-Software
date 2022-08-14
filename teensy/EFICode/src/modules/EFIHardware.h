@@ -10,6 +10,7 @@ public:
     void disableINJ();
     bool isInjDisabled() const;
     double getTotalFuelUsed() const;
+    void setInjectorPulseTime(unsigned long injectorPulseTime);
 private:
     EFIHardware();
     bool m_injIsDisabled;
