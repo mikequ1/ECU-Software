@@ -9,48 +9,48 @@ void Controller::sendCurrentData() { // THIS MUST TAKE LESS THAN 1 ms (to guarun
 // -last row and column used in tables ( maybe send back actual values used)
 // -whether we are still on startup cycles
 // -engine on? (or just use RPM = 0)
-  char toSend [1000];
+  //char toSend [1000];
   char ecuData [500];
   //NOTE: micros() will overflow if system is on for 70 minutes!
-  sprintf(ecuData, "%010u:%06i:%03.3f:%03.3f:%06.3f:%06.3f:%03.3f:%05i\n",//56 bytes
+  sprintf(ecuData, "%010lu >> %06lu : %05ld | %03.3f:%03.3f:%06.3f:%06.3f:%03.3f\n",
     micros(),
-    totalRevolutions, 
+    m_revCounter->getTotalRevolutions(), 
+    m_revCounter->getRPM(),
     m_ect->getReading(), 
     m_iat->getReading(), 
     m_map->getReading(), 
     m_map_avg->getSensorAvg(),
-    m_tps->getReading(), 
-    RPM
+    m_tps->getReading()
   );
   
-  sprintf(toSend, "%010u:%06i:%03.3f:%03.3f:%03.3f:%03.3f:%03.3f:%03.3f:%05i:%05i:%05i:%02.2f:%02.2f:%01.3f:%01i:%01i:%010u:%03.3f:%03.3f:%01i:%s:%01i:%03.3f\n", // about 97 bytes? (800-900 us)
-  	micros(), 
-	totalRevolutions, 
-	m_ect->getReading(), 
-	m_iat->getReading(), 
-	m_map->getReading(), 
-	m_map_avg->getSensorAvg(),
-	m_tps->getReading(), 
-	AFR, 
-	RPM, 
-  injectorPulseTime,
-	lastPulse,
-	scaledMAP, 
-	scaledRPM,
-	AFR,
-	true,
-	haveInjected,
-	m_map_avg->getTroughTime(),
-  m_map_avg->getPrevD(),
-  m_map_avg->getSensorGauss(),
-  SDConnected,
-  fileName,
-  m_ect->getReading() > MAX_ALLOWABLE_ECT,
-  AFR);
+  // sprintf(toSend, "%010u:%06i:%03.3f:%03.3f:%03.3f:%03.3f:%03.3f:%03.3f:%05i:%05i:%05i:%02.2f:%02.2f:%01.3f:%01i:%01i:%010u:%03.3f:%03.3f:%01i:%s:%01i:%03.3f\n", // about 97 bytes? (800-900 us)
+  // 	micros(), 
+	// totalRevolutions, 
+	// m_ect->getReading(), 
+	// m_iat->getReading(), 
+	// m_map->getReading(), 
+	// m_map_avg->getSensorAvg(),
+	// m_tps->getReading(), 
+	// AFR, 
+	// RPM, 
+  // injectorPulseTime,
+	// lastPulse,
+	// scaledMAP, 
+	// scaledRPM,
+	// AFR,
+	// true,
+	// haveInjected,
+	// m_map_avg->getTroughTime(),
+  // m_map_avg->getPrevD(),
+  // m_map_avg->getSensorGauss(),
+  // SDConnected,
+  // fileName,
+  // m_ect->getReading() > MAX_ALLOWABLE_ECT,
+  // AFR);
 
   if(SDConnected) { // open and write to file
     File logFile = SD.open(fileName, FILE_WRITE);
-    logFile.write(toSend);
+    logFile.write(ecuData);
     logFile.close();
   }
   
@@ -74,6 +74,5 @@ bool Controller::sendInfo(char* str){
 void Controller::trySendingData() {
   if (currentlySendingData) {
       sendCurrentData();
-      haveInjected = false;
   }
 }

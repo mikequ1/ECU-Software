@@ -10,7 +10,6 @@ EFIHardware* EFIHardware::create(){
 
 EFIHardware::EFIHardware() : 
     m_injIsDisabled{true},
-    m_haveInjected{false},
     m_totalPulseTime{0},
     m_injectorPulseTime{0},
     m_lastPulseTime{0}{
@@ -33,8 +32,6 @@ void EFIHardware::pulseOff(){
     Timer3.stop();
 
     m_totalPulseTime += (micros() - m_lastPulseTime);
-
-    m_haveInjected = true;
 }
 
 void EFIHardware::enableINJ(){
@@ -57,6 +54,6 @@ void EFIHardware::setInjectorPulseTime(unsigned long injectorPulseTime) {
 }
 
 //TODO
-double EFIHardware::getTotalFuelUsed() const {
-    return -1;
+unsigned long EFIHardware::getTotalFuelUsed() const {
+    return INJ_GIVEN_FLOW * m_totalPulseTime / INJ_DENSITY; //in mL
 }

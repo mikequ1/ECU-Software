@@ -39,25 +39,9 @@ public:
   // Performs 2D interpolation to lookup a pulse time for the given engine conditions.
   void lookupPulseTime();
 
-  //Finds the total amount of fuel used by measuiring the amount of fuel injected every revolution
-  //and accumulating the amount. Returns fuel level.
-  long getFuelUsed();
-
-  // If singleVal is true, determines the pulse time for the specified cell [row][col]
-  // of the AFR Table in units of microseconds times kelvin.
-  // If singleVal is false, determines the pulse time for every single AFR Table value
-  // in the AFR Table. In its current state, this will overwrite any adjustments that
-  // the O2 sensor feedback loop has made to the base pulse times.
-  void calculateBasePulseTime(bool singleVal, int row, int col);
-
-  // Returns true if the engine drops below the minimum RPM to consider the engine running.
-  bool detectEngineOff();
-
   // Checks to see if the engine is on or off. If the engine switches state since the last
   // check, changes parameters accordingly.
   void updateEngineState();
-
-  bool inStartingRevs();
 
   // Turns the injector on if it is not disabled.
   void pulseOn();
@@ -73,11 +57,7 @@ public:
   // sets the INJisDisabled flag to true.
   void disableINJ();
 
-  long getRPM (long int timePassed, int rev);
-
   void initializeParameters();
-
-  long interpolate2D(int blrow, int blcol, double x, double y);
 
   bool sendInfo(char* str);
 private:
@@ -88,37 +68,12 @@ private:
   bool refreshAvailable;
   const int* sensorVals;
 
-  bool INJisDisabled; //flag
-
-  int revolutions; //misc
-  unsigned long totalRevolutions; //misc
-  unsigned long startingRevolutions; //misc
-
-  unsigned long previousRev; //misc
-
-  unsigned long totalPulseTime; //misc
-  unsigned long lastPulse;
-  unsigned long totalFuelUsed;
-
-  long lastRPMCalcTime;//RPM stuff
-  long injectorPulseTime;
-
   //Data Retrieval
   bool enableSendingData;
   bool currentlySendingData; // used to disable data transmission during injection
-  bool haveInjected; // allows data retrieval to know when injections happened
   bool SDConnected;
   const char baseFileName[6] = "sdlog";
   char fileName[20] = "NOFILE";
-
-  double scaledMAP;
-  double scaledRPM;
-  int mapIndex;
-  int rpmIndex;
-
-  double constModifier;
-
-  long RPM;
 
   AnlgSensor* m_ect;
   AnlgSensor* m_iat;
@@ -133,7 +88,6 @@ private:
   EFIHardware* m_efih;
   EFI* m_efi;
 
-  double AFR;
 
   //
   // For some undocumented reason they use this table to account for

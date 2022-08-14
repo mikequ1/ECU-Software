@@ -9,12 +9,11 @@ public:
     void enableINJ();
     void disableINJ();
     bool isInjDisabled() const;
-    double getTotalFuelUsed() const;
+    unsigned long getTotalFuelUsed() const;
     void setInjectorPulseTime(unsigned long injectorPulseTime);
 private:
     EFIHardware();
     bool m_injIsDisabled;
-    bool m_haveInjected;
     unsigned long m_totalPulseTime;
     unsigned long m_injectorPulseTime;
     unsigned long m_lastPulseTime;

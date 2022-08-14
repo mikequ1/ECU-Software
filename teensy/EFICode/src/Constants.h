@@ -1,13 +1,6 @@
 #ifndef CONST_H
 #define CONST_H
 
-//Auxiliary Functions
-void countRev();
-void handle_pulseTimerTimeout();
-void enableINJ();
-void disableINJ();
-void dummy();
-void lowerStartupMod();
 
 // Assign MCU Pins to GPIO Pins
 #define GPIO_0  8
@@ -69,13 +62,10 @@ const int openTime = 1000;          // Estimated amount of time for injector to 
 // Controls the total number of revolutions
 const int NUM_REVS_FOR_START = 25;
 
-// Number of magnets the hall effect sensor must detect for one full revolution
-const int numMagnets = 1;
-
 //constants for fuel level sensor
-const double givenFlow = (38 / 60.0) / 10e6; //mass flow rate in g/microsecond 
+const double INJ_GIVEN_FLOW = (38 / 60.0) / 10e6; //mass flow rate in g/microsecond 
 //(could be 38,60,80,128,190,230,or 248 depending on Injection System):
-const double density = 0.789; //density in g/mL
+const double INJ_DENSITY = 0.789; //density in g/mL
 
 // Define the range of values that an AFR table value can take.
 const int MIN_AFR = 8;
@@ -100,12 +90,11 @@ const int minRPM = 120;     // In revolutions / minute
 const unsigned long maxMAP = 120000;     // In Pa
 const unsigned long minMAP = 20000;      // In Pa
 
-const unsigned long minDelayPerRev = (1 / (8000 * (1/60))) * (1E6); // in units of microseconds
-const unsigned int revsPerCalc = 5;
-
 // Define the number of rows and number of columns for the AFR Table.
 static const int numTableRows = 11;
 static const int numTableCols = 10;
+
+
 
 
 // Engine is considered off if it has RPM less than the minimum RPM.

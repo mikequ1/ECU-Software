@@ -77,26 +77,24 @@ void Controller::initializeParameters() {
   m_efih = EFIHardware::create();
   m_efi = EFI::create(m_iat, m_map_avg, m_revCounter, m_esa, m_efih);
 
-    // True   -> data reporting on.
-    // False  -> data reporting off.
-    enableSendingData = true;
-    currentlySendingData = enableSendingData;
-    haveInjected = false;
-    if(enableSendingData) {
-      SDConnected = SD.begin(BUILTIN_SDCARD);
-      if(SDConnected) { // find new fileName
-        int fileNumber = 0;
-        do {
-          sprintf(fileName, "%s%i", baseFileName, fileNumber);
-          fileNumber++;
-        } while(SD.exists(fileName));
-      }
+  // True   -> data reporting on.
+  // False  -> data reporting off.
+  enableSendingData = true;
+  currentlySendingData = enableSendingData;
+  if(enableSendingData) {
+    SDConnected = SD.begin(BUILTIN_SDCARD);
+    if(SDConnected) { // find new fileName
+      int fileNumber = 0;
+      do {
+        sprintf(fileName, "%s%i", baseFileName, fileNumber);
+        fileNumber++;
+      } while(SD.exists(fileName));
     }
+  }
 
-    // Calculate base pulse times from fuel ratio table. Should actually
-    // store the last table used and recall it from memory here!
-    calculateBasePulseTime(false, 0, 0);
-
+  // Calculate base pulse times from fuel ratio table. Should actually
+  // store the last table used and recall it from memory here!
+  m_efi->calculateBasePulseTime(injectorBasePulseTimes, fuelRatioTable, false, 0, 0);
 }
 
 void Controller::onRevDetection() {
@@ -115,18 +113,8 @@ void Controller::onRevDetection() {
 }
 
 
-long Controller::getFuelUsed() {
-  //volumetric flow rate = mass flow rate / density
-  return givenFlow * totalPulseTime / density; //in mL
-}
-
 void Controller::lookupPulseTime() {
   m_efi->lookupPulseTime(injectorBasePulseTimes);
-}
-
-
-void Controller::calculateBasePulseTime(bool singleVal, int row, int col) {
-  m_efi->calculateBasePulseTime(injectorBasePulseTimes, fuelRatioTable, singleVal, row, col);
 }
 
 void Controller::updateRPM() {
@@ -137,7 +125,9 @@ void Controller::enableINJ() {
   m_efih->enableINJ();
 }
 void Controller::pulseOn() {
+  currentlySendingData = false;
   m_efih->pulseOn();
+  currentlySendingData = enableSendingData;
 }
 void Controller::pulseOff() {
   m_efih->pulseOff();

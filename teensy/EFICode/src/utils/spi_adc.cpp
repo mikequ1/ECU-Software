@@ -95,10 +95,10 @@ void SPI_ADC::checkEOC() {
     handle_EOC();
 }
 
-static void SPI_ADC::handle_EOC() {          // EOC interrupt
+void SPI_ADC::handle_EOC() {          // EOC interrupt
   SPI_ADC::validVals = true;
   SPI_ADC::fetchVals = true;
 }
 
   
-static void SPI_ADC::dummy() {;}             // dummy for interrupt
+void SPI_ADC::dummy() {;}             // dummy for interrupt
