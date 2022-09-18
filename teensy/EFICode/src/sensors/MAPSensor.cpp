@@ -1,5 +1,6 @@
 #include "MAPSensor.h"
 #include "../Constants.h"
+#include "Arduino.h"
 
 // MPX4115A MAP sensor calibration
 const double MAPVs = Vs_5;
@@ -9,7 +10,9 @@ const double MAPOffset = 1E3*MAPDelta/(MAPVs*0.009) + 1E3*0.095/0.009;   //Pa
 const double MAPConversion = MAPSlope * voltConv;    // Pascals / 1023
 
 void MAPSensor::readSensor(const int* sensorVals){
+    noInterrupts();
     m_reading = MAPConversion * sensorVals[MAP_CHAN] + MAPOffset;
+    interrupts();
 }
 
 double MAPSensor::getReading() {

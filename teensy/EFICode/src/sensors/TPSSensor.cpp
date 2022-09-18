@@ -12,6 +12,7 @@ TPSSensor::TPSSensor() {
 }
 
 void TPSSensor::readSensor(const int* sensorVals) {
+  noInterrupts();
   unsigned long currThrottleMeasurementTime = micros();
 
   double newTPSVal = sensorVals[TPS_CHAN];
@@ -27,6 +28,7 @@ void TPSSensor::readSensor(const int* sensorVals) {
   m_lastThrottleMeasurementTime = currThrottleMeasurementTime;
 
   m_reading = newTPS;
+  interrupts();
 }
 
 double TPSSensor::getReading() {
