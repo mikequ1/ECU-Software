@@ -51,11 +51,11 @@ const double voltConv = adcRef / maxADC;
 //const double adcToOpampVin = adcRef / (maxADC * opampVoltageDivider);
 
 // Constants for calculating estimated injection times.
-const double engineDisplacement = 49.4E-6;    //meters^3
-const double airSpecificGasConstant = 286.9;   //Joules / (kilograms * Kelvin) (from Ideal Gas / Molecular Mass of Air
-const double injectorFuelRate   = 10E-3;    //kilograms per second
-const double injectionConstant  =
-              engineDisplacement / (airSpecificGasConstant * injectorFuelRate);
+const double ENGINE_DISPLACEMENT = 49.4E-6;    //meters^3
+const double AIR_SPECIFIC_GAS_CONSTANT = 286.9;   //Joules / (kilograms * Kelvin) (from Ideal Gas / Molecular Mass of Air
+const double INJECTOR_FUEL_RATE   = 10E-3;    //kilograms per second
+const double INJECTION_CONSTANT  =
+              ENGINE_DISPLACEMENT / (AIR_SPECIFIC_GAS_CONSTANT * INJECTOR_FUEL_RATE);
               // meters^2 / (kilograms * microseconds * Kelvin)
 const int openTime = 1000;          // Estimated amount of time for injector to open in microseconds.
 

@@ -81,7 +81,6 @@ void EFI::lookupPulseTime(long (&injectorBasePulseTimes)[numTableRows][numTableC
     m_rpmIndex = m_scaledRPM;
     interrupts();
 
-
     // Clip extrapolation to the value at the max index. Otherwise, perform 2D interpolation to get
     // the base pulse time and then divide by the temperature.
     long tempPulseTime;
@@ -107,7 +106,7 @@ void EFI::calculateBasePulseTime(long (&injectorBasePulseTimes)[numTableRows][nu
     unsigned long pressure = map(row, 0, numTableRows - 1, minMAP, maxMAP);
     // Compute a base pulse time in units of microseconds * Kelvin. Temperature will be
     // divided on the fly to get the actual pulse time used.
-    injectorBasePulseTimes[row][col] = 1E6 * pressure * injectionConstant / (fuelRatioTable[row][col]);
+    injectorBasePulseTimes[row][col] = 1E6 * pressure * INJECTION_CONSTANT / (fuelRatioTable[row][col]);
     return;
   }
 
@@ -117,7 +116,7 @@ void EFI::calculateBasePulseTime(long (&injectorBasePulseTimes)[numTableRows][nu
       unsigned long pressure = map(x, 0, numTableRows - 1, minMAP, maxMAP);
       // Compute a base pulse time in units of microseconds * Kelvin. Temperature will be
       // divided on the fly to get the actual pulse time used.
-      injectorBasePulseTimes[x][y] = 1E6 * pressure * injectionConstant / (fuelRatioTable[x][y]);
+      injectorBasePulseTimes[x][y] = 1E6 * pressure * INJECTION_CONSTANT / (fuelRatioTable[x][y]);
     }
   }
 }

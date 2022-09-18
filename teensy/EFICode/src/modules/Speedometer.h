@@ -14,13 +14,40 @@
 // interface for implementation 2 (without filter)
 class Speedometer {
     public:
+        /**
+         * @brief Create a speedometer object
+         * 
+         * @return pointer to the newly-created Speedometer object
+         */
         static Speedometer* create();
-        void updateSpd(); // increments totalRotations, rotations, upon interrupt of wheel-mounted hall sensor
+
+
+        /**
+         * @brief increments totalRotations, rotations, upon interrupt of wheel-mounted hall sensor
+         * 
+         */
+        void updateSpd();
+
+
+        /**
+         * @brief Get the current speed in MPH
+         * 
+         * @return double, current speed in MPH
+         */
         double getSpd();
+
     private:
+        /**
+         * @brief Construct a new Speedometer object
+         * 
+         */
         Speedometer();
+
+        // Current speed in mph
         double m_spd;
-        unsigned long m_totalRotations; // analogous to totalRevolutions for RPM
+        // Number of total rear wheel rotations
+        unsigned long m_totalRotations;
+        // Timestamp of the most recently recorded wheel rotation
         unsigned long m_lastRotationTimestamp; 
 };
 

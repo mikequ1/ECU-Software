@@ -41,7 +41,7 @@ bool EngineStateArbitrator::detectEngineOff(){
 }
 
 bool EngineStateArbitrator::inStartingRevs(){
-   return m_revCounter->getStartingRevolutions() <= NUM_REVS_FOR_START;
+   return m_revCounter->getTotalRevolutions() <= NUM_REVS_FOR_START;
 }
     
 bool EngineStateArbitrator::checkMaxTemp(){
