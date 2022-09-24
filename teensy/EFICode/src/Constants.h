@@ -103,6 +103,6 @@ const int SHUTOFF_RPM = 120;
 // Minimum time that must pass per revolution before the engine can be considered off.
 // Given in microseconds.
 // (60 sec / min) * (10^6 microsecond / sec) * (SHUTOFF_RPM min / revolution) = (SHUTOFF_DELAY microseconds / revolution)
-const unsigned long int SHUTOFF_DELAY = 1E6; // below 60 RPM is shutoff
+const unsigned long int SHUTOFF_DELAY = 1E6; // below 60 RPM is shutoff, should be 1E6
 
 #endif

@@ -12,6 +12,7 @@ RevCounter::RevCounter() :
     m_prevRevTime(micros()),
     m_prevRpmCalcTime(micros()),
     m_calcRevolutions(0),
+    m_startingRevolutions(0),
     m_totalRevolutions(0),
     m_rpm(0) {
 }
@@ -22,6 +23,7 @@ bool RevCounter::countRevolution(){
     m_prevRevTime = micros();
 
     m_calcRevolutions++;
+    m_startingRevolutions++;
     m_totalRevolutions++;
     return true;
 }
@@ -43,7 +45,7 @@ void RevCounter::updateRPM(){
 }
 
 void RevCounter::handleEngineOff(){
-    m_totalRevolutions = 0;
+    m_startingRevolutions = 0;
     m_rpm = 0;
     m_prevRpmCalcTime = micros();
 }
@@ -58,6 +60,10 @@ long RevCounter::getRPM() {
 
 unsigned long RevCounter::getTotalRevolutions(){
     return m_totalRevolutions;
+}
+
+unsigned long RevCounter::getStartingRevolutions(){
+    return m_startingRevolutions;
 }
 
 unsigned long RevCounter::getPrevRevTime(){

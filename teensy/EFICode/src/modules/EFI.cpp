@@ -120,3 +120,9 @@ void EFI::calculateBasePulseTime(long (&injectorBasePulseTimes)[numTableRows][nu
     }
   }
 }
+
+void EFI::updateEngineState(){
+    m_esa->updateEngineState();
+    if (m_esa->getEngineState() == OFF && !m_efiHw->isInjDisabled())
+        m_efiHw->disableINJ();
+}

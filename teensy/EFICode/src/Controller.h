@@ -88,7 +88,7 @@ private:
   EFIHardware* m_efih;
   EFI* m_efi;
 
-
+  bool m_haveInjected;
   //
   // For some undocumented reason they use this table to account for
   // Volumetric Efficiency so these values are more like AFR/VE

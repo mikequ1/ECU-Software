@@ -27,6 +27,27 @@ void EngineStateArbitrator::updateEngineState() {
 EngineState EngineStateArbitrator::getEngineState() {
     return m_engineState;
 }
+
+int EngineStateArbitrator::getEngineStateCode() {
+    switch (m_engineState)
+    {
+    case OFF:
+        return 0;
+        break;
+    case STARTING:
+        return 2;
+        break;
+    case MAX_TEMP_EXCEEDED:
+        return -2;
+        break;
+    case OK:
+        return 1;
+        break;
+    default:
+        return -1;
+        break;
+    }
+}
     
 EngineStateArbitrator::EngineStateArbitrator(AnlgSensor* ectSensor, RevCounter* revCounter) :
     m_ectSensor(ectSensor),
@@ -41,7 +62,7 @@ bool EngineStateArbitrator::detectEngineOff(){
 }
 
 bool EngineStateArbitrator::inStartingRevs(){
-   return m_revCounter->getTotalRevolutions() <= NUM_REVS_FOR_START;
+   return m_revCounter->getStartingRevolutions() <= NUM_REVS_FOR_START;
 }
     
 bool EngineStateArbitrator::checkMaxTemp(){

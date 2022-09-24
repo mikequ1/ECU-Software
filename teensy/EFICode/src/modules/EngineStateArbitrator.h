@@ -10,6 +10,7 @@ public:
     static EngineStateArbitrator* create(AnlgSensor* ectSensor, RevCounter* revCounter);
     void updateEngineState();
     EngineState getEngineState();
+    int getEngineStateCode();
 private:
     EngineStateArbitrator(AnlgSensor* ECTSensor, RevCounter* RevCounter);
     bool detectEngineOff();

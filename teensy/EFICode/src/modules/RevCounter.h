@@ -35,12 +35,21 @@ public:
      */
     void handleEngineOff();
 
+
     /**
      * @brief Get the Total Revolutions count
      * 
      * @return unsigned long, the total number of engine revolutions
      */
     unsigned long getTotalRevolutions();
+
+    
+    /**
+     * @brief Get the Starting Revolutions count
+     * 
+     * @return unsigned long, the number of starting revolutions
+     */
+    unsigned long getStartingRevolutions();
 
 
     /**
@@ -78,8 +87,10 @@ private:
 
     // The number of revolutions for RPM calculation
     unsigned long m_calcRevolutions;
-    // The number of revolutions in total recorded since the engine was last on
+    // The number of revolutions since the electrical system was turned on
     unsigned long m_totalRevolutions;
+    // The number of revolutions since the engine was last on
+    unsigned long m_startingRevolutions;
     // The engine's current RPM at flywheel
     long m_rpm;
 

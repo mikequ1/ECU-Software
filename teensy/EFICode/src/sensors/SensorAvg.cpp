@@ -40,6 +40,7 @@ double SensorAvg::getPrevD(){
 }
 
 void SensorAvg::calcAvg(){
+    noInterrupts();
     m_avg->addData(m_sensor->getReading());
     // Update MAPPeak and MAPTrough
     if (m_updateTime - micros() > minDt) {
@@ -54,6 +55,7 @@ void SensorAvg::calcAvg(){
 		m_prev = m_avg->getGauss();
 	    m_updateTime = micros();
     }
+    interrupts();
 }
 
 double SensorAvg::getSensorReading(){

@@ -19,7 +19,7 @@ Controller::Controller() {
 
     // Initializes Serial input and output at the specified baud rate.
     Serial.begin(BAUD_RATE);
-    Serial1.begin(BAUD_RATE);
+    //Serial1.begin(BAUD_RATE);
 
     // Prevent blocking caused by the lack of a serial connection with a laptop (fixed W22)
     long t = micros();
@@ -80,6 +80,7 @@ void Controller::initializeParameters() {
   // True   -> data reporting on.
   // False  -> data reporting off.
   enableSendingData = true;
+  m_haveInjected = false;
   currentlySendingData = enableSendingData;
   if(enableSendingData) {
     SDConnected = SD.begin(BUILTIN_SDCARD);
@@ -98,16 +99,15 @@ void Controller::initializeParameters() {
 }
 
 void Controller::onRevDetection() {
-  m_esa->updateEngineState();
   if (m_esa->getEngineState() == EngineState::MAX_TEMP_EXCEEDED)
-    return;
-
-  if (!m_revCounter->countRevolution())
     return;
 
   if (m_efih->isInjDisabled()) {
     enableINJ();
   }
+
+  if (!m_revCounter->countRevolution())
+    return;
 
   m_efi->onRevDetectionInject();
 }
@@ -124,11 +124,12 @@ void Controller::updateRPM() {
 void Controller::enableINJ() {
   m_efih->enableINJ();
 }
-void Controller::pulseOn() {
-  currentlySendingData = false;
-  m_efih->pulseOn();
-  currentlySendingData = enableSendingData;
-}
+
 void Controller::pulseOff() {
   m_efih->pulseOff();
+  m_haveInjected = true;
+}
+
+void Controller::updateEngineState(){
+  m_efi->updateEngineState();
 }

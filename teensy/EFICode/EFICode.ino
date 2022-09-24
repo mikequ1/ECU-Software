@@ -61,6 +61,9 @@ void loop() {
 
   // Look up injection time on each loop cycle
   c->lookupPulseTime();
+
+  // Update state of the engine
+  c->updateEngineState();
 }
 
 void countRev() {
@@ -68,6 +71,11 @@ void countRev() {
 }
 
 void handle_pulseTimerTimeout() {
+  if(digitalRead(LED_1) == 0){ 
+    digitalWrite(LED_1, HIGH);
+  } else {
+    digitalWrite(LED_1, LOW);
+  }
   c->pulseOff();
 }
 

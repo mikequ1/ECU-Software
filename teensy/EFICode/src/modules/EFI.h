@@ -16,6 +16,7 @@ public:
     long interpolate2D(long (&injectorBasePulseTimes)[numTableRows][numTableCols], int blrow, int blcol, double x, double y);
     void lookupPulseTime(long (&injectorBasePulseTimes)[numTableRows][numTableCols]);
     void calculateBasePulseTime(long (&injectorBasePulseTimes)[numTableRows][numTableCols], double (&fuelRatioTable)[numTableRows][numTableCols], bool singleVal, int row, int col);
+    void updateEngineState();
 private:
     EFI(AnlgSensor* iatSensor, SensorAvg* mapAvg, RevCounter* revCounter, EngineStateArbitrator* esa, EFIHardware* efiHw);
     double m_AFR;
