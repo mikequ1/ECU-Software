@@ -1,15 +1,19 @@
-# ECU Code: Revised and Updated
+# ECU Software: Revised and Upgraded
 
-## Current Version: N/A
+## Current Version: v 1.0.0
 
-## In Development: v 0.0.1
+## In Development: v 1.1.0
 Goals:
-- Preliminary Working EFI system that uses the MAPS (Manifold Absolute Pressure Sensor) reading and the Engine RPM to perform fuel injection
-- Refactor old versions (2016-2022) by using object-oriented programming to modularize code and facilitate debugging
+- AFR Ratio (Fuel Tune) Swapper/Loader
+- Serial Logging interface
+
+
+## Changelog:
+`v1.0.0`
+- Preliminary Working EFI system that uses the MAPS (Manifold Absolute Pressure Sensor) reading and Engine RPM to perform fuel injection
+- Refactor old EFICode Versions (2016-2022) in favor of SOLID software design principles (notably single responsibility). Replaced old procedural code with object-oriented programming, encapsulation, modularization, and the use of design patterns.
 
 ### List of Future Goals
-- Add a logger interface, 
 - Adding an on-microcontroller unit test process for individual modules
-- Formulate version update rules
  
 
