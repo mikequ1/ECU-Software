@@ -71,6 +71,7 @@ void Controller::initializeParameters() {
   m_tps = new TPSSensor();
   m_map_avg = new SensorAvg(m_map);
 
+  m_afrLoader = AFRLoader::create();
   m_revCounter = RevCounter::create();
   m_speedometer = Speedometer::create();
   m_esa = EngineStateArbitrator::create(m_ect, m_revCounter);

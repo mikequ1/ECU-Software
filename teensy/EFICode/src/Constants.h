@@ -29,9 +29,9 @@
 #define PBTN 30
 
 // Assign Analog Sensors (from ADC Channels)
-#define TPS_CHAN 2  // UPDATE
+#define TPS_CHAN 3  // UPDATE
 #define ECT_CHAN 0  // UPDATE
-#define MAP_CHAN 3  // UPDATE
+#define MAP_CHAN 2  // UPDATE
 #define IAT_CHAN 1 // UPDATE
 #define OIN1_CHAN 5 // UPDATE
 #define OIN2_CHAN 6 // UPDATE
@@ -93,9 +93,6 @@ const unsigned long minMAP = 20000;      // In Pa
 // Define the number of rows and number of columns for the AFR Table.
 static const int numTableRows = 11;
 static const int numTableCols = 10;
-
-
-
 
 // Engine is considered off if it has RPM less than the minimum RPM.
 const int SHUTOFF_RPM = 120;

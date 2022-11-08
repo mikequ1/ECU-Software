@@ -28,3 +28,5 @@ double Speedometer::getSpd(){
     interrupts();
     return tmp_spd; 
 }
+
+//arhison says to map speedometer reading to RPM, if the ratio is smaller than gear ratio, clutch is slipping

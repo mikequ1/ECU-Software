@@ -10,6 +10,7 @@
 #include "modules/EFIHardware.h"
 #include "modules/EngineStateArbitrator.h"
 #include "modules/EFI.h"
+#include "modules/AFRLoader.h"
 
 #include "utils/spi_adc.h"
 
@@ -82,6 +83,7 @@ private:
   
   SensorAvg* m_map_avg;
 
+  AFRLoader* m_afrLoader;
   RevCounter* m_revCounter;
   Speedometer* m_speedometer;
   EngineStateArbitrator* m_esa;
