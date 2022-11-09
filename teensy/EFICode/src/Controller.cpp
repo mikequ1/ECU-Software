@@ -79,6 +79,8 @@ void Controller::initializeParameters() {
   m_efi = EFI::create(m_iat, m_map_avg, m_revCounter, m_esa, m_efih);
 
   m_afrLoader->dumpAFRList();
+  m_afrLoader->updateAFR("afr1.txt");
+  m_afrLoader->updateAFR("afr2.txt");
   // True   -> data reporting on.
   // False  -> data reporting off.
   enableSendingData = true;

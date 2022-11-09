@@ -5,7 +5,7 @@
 static const char* AFR_TABLES_FILENAME = "afrlist.txt";
 double DEFAULT_AFR_TABLE[NUM_AFR_TABLE_ROWS][NUM_AFR_TABLE_COLS] =
     {
-    {14.5,14.8,15.0,15.3,15.3,15.2,14.6,14.3,13.8,13.6},  // minimum pressure
+    {14.5,14.8,15.0,15.3,15.3,15.2,14.6,14.3,13.8,88.8},  // minimum pressure
     {14.5,14.8,15.0,15.3,15.3,15.2,14.6,14.3,13.8,13.6},
     {14.5,14.8,15.0,15.3,15.3,15.2,14.6,14.3,13.8,13.6},
     {14.5,14.8,15.5,15.3,16.0,16.0,15.7,14.3,13.8,13.6},
@@ -68,8 +68,11 @@ void AFRLoader::readAFRList(const char* filename, char* (&afrList)[MAX_NUM_OF_AF
                 afrIndex++;
             } else {
                 afrFileBuffer[afrIndex] = '\0';
-                afrList[afrListIndex] = afrFileBuffer;
+                char* afrFilenameCopy = malloc(strlen(afrFileBuffer) + 1);;
+                strcpy(afrFilenameCopy, afrFileBuffer);
+                afrList[afrListIndex] = afrFilenameCopy;
                 // Serial.println(afrList[afrListIndex]);
+
                 strcat(afrFileBuffer,"");;
                 afrIndex = 0;
                 afrListIndex++;
@@ -80,20 +83,75 @@ void AFRLoader::readAFRList(const char* filename, char* (&afrList)[MAX_NUM_OF_AF
     } 
 }
 
-void AFRLoader::dumpAFRList() const {
-    Serial.println("Dumping AFR List");
-    for (int i = 0; i < m_afrListSize; i++){
-        Serial.println(m_afrList[i]);
+bool AFRLoader::updateAFR(const char* tablename) {
+    File afrTableFile = SD.open(tablename);
+    double tempFuelRatioTable[NUM_AFR_TABLE_ROWS][NUM_AFR_TABLE_COLS];
+
+    if (afrTableFile){
+        int afrColIndex = 0;
+        int afrRowIndex = 0;
+        char afrValueBuffer[10];
+        int afrValueIterator = 0;
+        while (afrTableFile.available()){
+            if (afrRowIndex > NUM_AFR_TABLE_ROWS || afrColIndex >= NUM_AFR_TABLE_COLS){
+                Serial.println("Incompatible AFR Table Rows and Columns");
+                return false;
+            }
+            char curByte = afrTableFile.read();
+            if (curByte == ','){
+                afrValueBuffer[afrValueIterator] = '\0';
+                afrValueIterator = 0;
+                tempFuelRatioTable[afrRowIndex][afrColIndex] = atof(afrValueBuffer);
+                afrColIndex++;
+            } else if (curByte == '\n'){
+                afrValueBuffer[afrValueIterator] = '\0';
+                afrValueIterator = 0;
+                tempFuelRatioTable[afrRowIndex][afrColIndex] = atof(afrValueBuffer);
+                afrRowIndex++;
+                afrColIndex = 0;
+            } else {
+                afrValueBuffer[afrValueIterator] = curByte;
+                afrValueIterator++;
+            }
+        }
+        noInterrupts();
+        for (int i = 0; i < NUM_AFR_TABLE_ROWS; i++){
+            for (int j = 0; j < NUM_AFR_TABLE_COLS; j++){
+                m_fuelRatioTable[i][j] = tempFuelRatioTable[i][j];
+            }
+        }
+        interrupts();
+        this->dumpFuelRatios();
+        return true;
+    }
+    return false;
+}
+
+void AFRLoader::getFuelRatioTable(double (&fuelRatioTable)[NUM_AFR_TABLE_ROWS][NUM_AFR_TABLE_COLS]) const {
+    for (int i = 0; i < NUM_AFR_TABLE_ROWS; i++){
+        for (int j = 0; j < NUM_AFR_TABLE_COLS - 1; j++){
+            fuelRatioTable[i][j] = m_fuelRatioTable[i][j];
+        }
     }
 }
 
+void AFRLoader::dumpAFRList() const {
+    Serial.println("===== Dumping AFR List =====");
+    for (int i = 0; i < m_afrListSize; i++){
+        Serial.println(m_afrList[i]);
+    }
+    Serial.println("====== End of List =====");
+}
 
-void AFRLoader::dumpPulseTimes() const {
+void AFRLoader::dumpFuelRatios() const {
+    Serial.println("===== Dumping current Fuel Ratios =====");
     for (int i = 0; i < NUM_AFR_TABLE_ROWS; i++){
         for (int j = 0; j < NUM_AFR_TABLE_COLS - 1; j++){
-            Serial.print(injectorBasePulseTimes[i][j]);
+            Serial.print(m_fuelRatioTable[i][j]);
+            Serial.print(", ");
         }
-        Serial.println(injectorBasePulseTimes[i][NUM_AFR_TABLE_COLS - 1]);
+        Serial.println(m_fuelRatioTable[i][NUM_AFR_TABLE_COLS - 1]);
     }
+    Serial.println("====== End of List =====");
 }
 
