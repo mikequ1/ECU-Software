@@ -78,6 +78,7 @@ void Controller::initializeParameters() {
   m_efih = EFIHardware::create();
   m_efi = EFI::create(m_iat, m_map_avg, m_revCounter, m_esa, m_efih);
 
+  m_afrLoader->dumpAFRList();
   // True   -> data reporting on.
   // False  -> data reporting off.
   enableSendingData = true;
