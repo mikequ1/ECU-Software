@@ -8,7 +8,7 @@ static const int MAX_NUM_OF_AFR_TABLES = 10;
 class AFRLoader {
 public:
     static AFRLoader* create();
-    static void readAFRList(const char* filename, char* (&afrList)[MAX_NUM_OF_AFR_TABLES], int& afrListSize);
+    static bool readAFRList(const char* filename, char* (&afrList)[MAX_NUM_OF_AFR_TABLES], int& afrListSize);
     bool updateAFR(const char* tablename);
 
     void getFuelRatioTable(double (&fuelRatioTable)[NUM_AFR_TABLE_ROWS][NUM_AFR_TABLE_COLS]) const;

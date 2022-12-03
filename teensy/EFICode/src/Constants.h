@@ -17,7 +17,7 @@
 #define GPIO_11 23
 
 // Assign Digital Peripherals
-#define INJ_Pin   1 // MISLABELED ON cont board v1 Schematic (this is correct)
+#define INJ_Pin   GPIO_6 // MISLABELED ON cont board v1 Schematic (this is correct)
 #define BUZZ_Pin  0 // MISLABELED ON cont board v1 Schematic (this is correct)
 #define LED_1     31
 

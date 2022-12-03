@@ -23,17 +23,22 @@ AFRLoader* AFRLoader::create(){
     return afrLoader;
 }
 
+// In filesystem, text file containing a newline-separated list of AFR file names
+// insert afrList into a m_afrList and m_afrListSize
+// if AFR List from SD is not available, use default tune table pre-loaded into RAM
+// otherwise, use the first filename from AFR List
 AFRLoader::AFRLoader(){
     char* afrList[MAX_NUM_OF_AFR_TABLES];
     int afrListSize = 0;
-    AFRLoader::readAFRList(AFR_TABLES_FILENAME, afrList, afrListSize);
+    bool afrListSDAvailable = AFRLoader::readAFRList(AFR_TABLES_FILENAME, afrList, afrListSize);
 
+    // NOTE TO SELF: can be refactored!
     for (int i = 0; i < afrListSize; i++){
         m_afrList[i] = afrList[i]; 
     }
     m_afrListSize = afrListSize;
 
-    if (!m_afrList){
+    if (!afrListSDAvailable){
         for (int i = 0; i < NUM_AFR_TABLE_ROWS; i++){
             for (int j = 0; j < NUM_AFR_TABLE_COLS; j++){
                 m_fuelRatioTable[i][j] = DEFAULT_AFR_TABLE[i][j];
@@ -41,17 +46,19 @@ AFRLoader::AFRLoader(){
         }
     } else {
         char* default_afrFile = m_afrList[0];
-        Serial.print("Default AFR Tables: ");
+        Serial.print("Default AFR Table source: ");
         Serial.println(default_afrFile);
+        updateAFR(default_afrFile);
     }
 }
 
-void AFRLoader::readAFRList(const char* filename, char* (&afrList)[MAX_NUM_OF_AFR_TABLES], int& afrListSize) {
+// Read an AFR List file, and store the information in a string array, also updating the size of the afr table's size
+bool AFRLoader::readAFRList(const char* filename, char* (&afrList)[MAX_NUM_OF_AFR_TABLES], int& afrListSize) {
     Serial.print("Initializing SD card...");
 
     if (!SD.begin(BUILTIN_SDCARD)) {
         Serial.println("SD initialization failed!");
-        return;
+        return false;
     }
     Serial.println("SD initialization done.");
 
@@ -80,7 +87,9 @@ void AFRLoader::readAFRList(const char* filename, char* (&afrList)[MAX_NUM_OF_AF
         }
         afrListSize = afrListIndex;
         afrListFile.close();
+        return true;
     } 
+    return false;
 }
 
 bool AFRLoader::updateAFR(const char* tablename) {
@@ -121,7 +130,9 @@ bool AFRLoader::updateAFR(const char* tablename) {
             }
         }
         interrupts();
-        this->dumpFuelRatios();
+        //this->dumpFuelRatios();
+        Serial.print("AFR table updated to use: ");
+        Serial.println(tablename);
         return true;
     }
     return false;

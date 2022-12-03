@@ -77,10 +77,11 @@ void Controller::initializeParameters() {
   m_esa = EngineStateArbitrator::create(m_ect, m_revCounter);
   m_efih = EFIHardware::create();
   m_efi = EFI::create(m_iat, m_map_avg, m_revCounter, m_esa, m_efih);
+  
+  //m_afrLoader->dumpAFRList();
+  m_afrLoader->getFuelRatioTable(m_fuelRatioTable);
+  m_afrLoader->dumpFuelRatios();
 
-  m_afrLoader->dumpAFRList();
-  m_afrLoader->updateAFR("afr1.txt");
-  m_afrLoader->updateAFR("afr2.txt");
   // True   -> data reporting on.
   // False  -> data reporting off.
   enableSendingData = true;
@@ -99,7 +100,8 @@ void Controller::initializeParameters() {
 
   // Calculate base pulse times from fuel ratio table. Should actually
   // store the last table used and recall it from memory here!
-  m_efi->calculateBasePulseTime(injectorBasePulseTimes, fuelRatioTable, false, 0, 0);
+  m_efi->calculateBasePulseTime(injectorBasePulseTimes, m_fuelRatioTable, false, 0, 0);
+  this->dumpBasePulseTimes();
 }
 
 void Controller::onRevDetection() {
@@ -136,4 +138,16 @@ void Controller::pulseOff() {
 
 void Controller::updateEngineState(){
   m_efi->updateEngineState();
+}
+
+void Controller::dumpBasePulseTimes() const {
+  Serial.println("===== Dumping current base pulse times =====");
+    for (int i = 0; i < numTableRows; i++) {
+        for (int j = 0; j < numTableCols; j++) {
+            Serial.print(injectorBasePulseTimes[i][j]);
+            Serial.print(", ");
+        }
+        Serial.println();
+    }
+  Serial.println("===== base pulse times finished =====");
 }
