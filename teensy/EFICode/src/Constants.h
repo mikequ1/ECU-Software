@@ -22,6 +22,7 @@
 #define LED_1     31
 
 #define HES_Pin GPIO_5// UPDATE
+#define IAT_Pin GPIO_11
 #define DIP_1 35
 #define DIP_2 36
 #define DIP_3 39

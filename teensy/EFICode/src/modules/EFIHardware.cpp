@@ -20,6 +20,7 @@ EFIHardware::EFIHardware() :
 void EFIHardware::pulseOn(){
     if (m_injectorPulseTime > 2.5E5)
         m_injectorPulseTime = 2.5E5;
+    Serial.println(m_injectorPulseTime);
     Timer3.setPeriod(m_injectorPulseTime);
     digitalWrite(INJ_Pin, HIGH);
     Timer3.start();

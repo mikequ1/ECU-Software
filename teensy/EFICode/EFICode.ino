@@ -71,12 +71,12 @@ void countRev() {
 }
 
 void handle_pulseTimerTimeout() {
+  c->pulseOff();
   if(digitalRead(LED_1) == 0){ 
     digitalWrite(LED_1, HIGH);
   } else {
     digitalWrite(LED_1, LOW);
   }
-  c->pulseOff();
 }
 
 void handle_sendData() {
