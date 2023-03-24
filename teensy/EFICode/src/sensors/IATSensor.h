@@ -2,13 +2,18 @@
 #define IATSENSOR_H
 
 #include "AnlgSensor.h"
+#include "dht.h"
 
-class IATSensor : public AnlgSensor {
+class IATSensor {
 public:
-    void readSensor(const int* sensorVals);
+    IATSensor();
+    void readSensor();
     double getReading();
+
 private:
     double m_reading;
+    dht* m_DHT;
+    long m_tLastReading;
 };
 
 #endif

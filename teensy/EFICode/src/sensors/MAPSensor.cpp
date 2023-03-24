@@ -14,7 +14,7 @@ const double  MAP_VS = Vs_5;
 void MAPSensor::readSensor(const int* sensorVals){
     noInterrupts();
     // m_reading = MAPConversion * sensorVals[MAP_CHAN] + MAPOffset;
-    m_reading = ((((sensorVals[MAP_CHAN]  *  voltConv)/MAP_VS) - 0.04)  * 100 *  1000/9 ) -381 +  101325;
+    m_reading = ((((sensorVals[MAP_CHAN]  *  voltConv)/MAP_VS) - 0.04)/0.09)*1000 +  101325;
     interrupts();
 }
 

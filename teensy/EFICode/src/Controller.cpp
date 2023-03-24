@@ -50,7 +50,7 @@ bool Controller::readSensors() {
 
     m_tps->readSensor(sensorVals);
     m_ect->readSensor(sensorVals);
-    m_iat->readSensor(sensorVals);
+    m_iat->readSensor();
     m_map->readSensor(sensorVals);
 
     m_map_avg->calcAvg();

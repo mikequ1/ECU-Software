@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "sensors/AnlgSensor.h"
 #include "sensors/SensorAvg.h"
+#include "sensors/IATSensor.h"
 
 #include "modules/RevCounter.h"
 #include "modules/Speedometer.h"
@@ -80,7 +81,7 @@ private:
   char fileName[20] = "NOFILE";
 
   AnlgSensor* m_ect;
-  AnlgSensor* m_iat;
+  IATSensor* m_iat;
   AnlgSensor* m_map; //MAP module, responsible for collecting data and processing data from the Manifold Pressure Sensor
   AnlgSensor* m_tps; //TPS Module, responsible for collecting TPS
   

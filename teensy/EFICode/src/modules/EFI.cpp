@@ -4,7 +4,7 @@
 #include "../Utils.h"
 #include "Arduino.h"
 
-EFI* EFI::create(AnlgSensor* iatSensor, 
+EFI* EFI::create(IATSensor* iatSensor, 
         SensorAvg* mapAvg, 
         RevCounter* revCounter, 
         EngineStateArbitrator* esa, 
@@ -28,7 +28,7 @@ EFI* EFI::create(AnlgSensor* iatSensor,
     return new EFI(iatSensor, mapAvg, revCounter, esa, efiHw);
 }
 
-EFI::EFI(AnlgSensor* iatSensor, 
+EFI::EFI(IATSensor* iatSensor, 
         SensorAvg* mapAvg, 
         RevCounter* revCounter, 
         EngineStateArbitrator* esa, 

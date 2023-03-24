@@ -1,7 +1,7 @@
 #include "ECULogger.h"
 #include <Arduino.h>
 
-Logger::Logger() : _level(DEBUG) {
+Logger::Logger() : _level(STREAM) {
 }
 
 void Logger::set_level(Level level) {
